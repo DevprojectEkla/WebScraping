@@ -1,5 +1,6 @@
 import os,sys
 from bs4 import BeautifulSoup
+from threading import Thread
 import requests
 
 with open('list.txt','r') as f_keywordlist:
@@ -12,7 +13,7 @@ key_words_number = len(key_word_list)
 for key_word in key_word_list:
 
     k = 0
-    for n in range(2, 100):
+    for n in range(2, 20):
         
         links_for_download = []
         myreq_get = requests.get(f'https://www.wallpaperflare.com/search?wallpaper={key_word}&&page={n}') 
@@ -44,14 +45,19 @@ for key_word in key_word_list:
                 job = soup.find_all(id = "show_img")
                 for link in job:
                     url_img = link.attrs['src']
-                    print(f"Downloading file from: {url_img}")
-                    get_content = requests.get(url_img,stream=True)
-                    with open(f'img/{key_word}/{key_word}-{i}-page{n}.jpg','wb') as fd:
-                        for chunk in get_content.iter_content(chunk_size=512):
-                            fd.write(chunk)
-                        fd.close()
-                    print(f"img file:{fd.name} copied\n {i}/{len(links_for_download)} : {len(links_for_download)-i} remaining")
+                    if not os.path.isfile(f'img/{key_word}/{key_word}-{i}-page{n}.jpg'):
+                        print(f"Downloading file from: {url_img}")
+                        get_content = requests.get(url_img,stream=True)
+                        with open(f'img/{key_word}/{key_word}-{i}-page{n}.jpg','wb') as fd:
+                            for chunk in get_content.iter_content(chunk_size=512):
+                                fd.write(chunk)
+                            fd.close()
+                        print(f"img file:{fd.name} copied\n {i}/{len(links_for_download)} : {len(links_for_download)-i} remaining")
+                    else:
+                        print(f"the file img/{key_word}/{key_word}-{i}-page{n}.jpg already exists.")
+                        print(f"skipping this url...")
                 i+=1
+            print("===========================================================")
             print(f'Page {n} has been scrapped entirely in folder {key_word}.')
             print("===========================================================")
             print(f'Scraping of page {n+1} started...')
@@ -68,7 +74,8 @@ print('Hope you enjoyed and Have fun with your new data !!!')
 sys.exit(0)
 
 
-            
+def scrapping_iteration():
+
 
                 
 
