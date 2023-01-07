@@ -24,44 +24,34 @@ class Algo_G():
     def define_key_word_entry(key_word):
         '''check if a key word is read from the input field or if a file lsit of key words should be used instead '''
         
-        if key_word == '' or key_word == '\n':
-            with open('list.txt','r') as f_keywordlist:
+        if os.path.isfile(key_word):
+            with open(key_word,'r') as f_keywordlist:
                 key_word_list = f_keywordlist.read().splitlines()
         else:
             key_word_list = [key_word]
 
         return key_word_list
 
-
-    @staticmethod
-    def  prepare_name_directory(user_input):
-        '''a key word of the form Lord+of+the+rings is converted in Lord-of-the-ring to name the directory'''
-
-        if '+' in user_input:
-            dirname = user_input.replace('+','-')
-            filename = dirname
-        else:
-            dirname = user_input
-            filename = user_input
-        return dirname, filename
-
-    def main_iteration(self, key_word_list, dirname, filename, number_of_page):
+    def main_iteration(self, key_word_list, number_of_page):
         j = 0
         pages_for_keyword = ('?','?')
         summary = []
         key_words_number = len(key_word_list)
         printProgressBar(0, key_words_number, prefix='Keywords progress', suffix= 'keyword list complete', length=50)
         for key_word in key_word_list:
+            dirname = key_word
+            filename = dirname
+            if '+' in key_word:
+                dirname = key_word.replace('+','-')
+                filename = dirname
             if self._KILL:
                 break
-            
             k = 0
             printProgressBar(0, number_of_page, prefix='Downloading page in progress', suffix= 'all page complete', length=50)
             number_of_files = 0
             for n in range(1, number_of_page):
                 if self._KILL:
                     break
-                
                 links_for_download = []
                 myreq_get = requests.get(f'https://www.wallpaperflare.com/search?wallpaper={key_word}&&page={n}') 
                 if myreq_get.status_code == 404:
@@ -127,7 +117,7 @@ class Algo_G():
                         number_of_files+=1
                     print("===========================================================")
                     print(f'Page {n} has been scrapped entirely in folder {dirname}.')
-                    if number_of_page < n:
+                    if n < number_of_page:
                         print("===========================================================")
                         print(f' still {number_of_page-n} to scrap remaining...')
                     else:
