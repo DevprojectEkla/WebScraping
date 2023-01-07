@@ -73,8 +73,13 @@ for key_word in key_word_list:
                         myprint(f"Downloading file from: {url_img}")
                         get_content = requests.get(url_img,stream=True)
                         with open(f'img/{dirname}/{filename}-page{n}-IMG{i}.jpg','wb') as fd:
+
+                            printProgressBar(0, len(links_for_download), prefix=f'Downloading file in progress', suffix= 'file download Complete', length=10, fill='x')
+                            f = 0
                             for chunk in get_content.iter_content(chunk_size=512):
                                 fd.write(chunk)
+                                f += 1
+                                printProgressBar(f, len(links_for_download), prefix=f'Downloading file in progress', suffix= 'Page Complete', length=10, fill='x')
                             fd.close()
                         myprint(f"img file:{fd.name} copied\n {i}/{len(links_for_download)} : {len(links_for_download)-i} remaining")
                         myprint(f"page {n}/{number_of_page} : {number_of_page-n} remaining")
