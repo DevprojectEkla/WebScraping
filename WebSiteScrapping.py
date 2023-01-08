@@ -72,14 +72,15 @@ for key_word in key_word_list:
                     if not os.path.isfile(f'img/{dirname}/{filename}-{i}-page{n}.jpg'):
                         myprint(f"Downloading file from: {url_img}")
                         get_content = requests.get(url_img,stream=True)
+                        size_of_file = get_content.headers['Content-Length']
                         with open(f'img/{dirname}/{filename}-page{n}-IMG{i}.jpg','wb') as fd:
 
-                            printProgressBar(0, len(links_for_download), prefix=f'Downloading file in progress', suffix= 'file download Complete', length=10, fill='x')
+                            printProgressBar(0, int(size_of_file)/512, prefix=f'Downloading file in progress', suffix= 'DL file Completed', length=10, fill='x')
                             f = 0
                             for chunk in get_content.iter_content(chunk_size=512):
                                 fd.write(chunk)
                                 f += 1
-                                printProgressBar(f, len(links_for_download), prefix=f'Downloading file in progress', suffix= 'Page Complete', length=10, fill='x')
+                                printProgressBar(f, int(size_of_file)/512, prefix=f'Downloading file in progress', suffix= 'DL file Completed', length=10, fill='x')
                             fd.close()
                         myprint(f"img file:{fd.name} copied\n {i}/{len(links_for_download)} : {len(links_for_download)-i} remaining")
                         myprint(f"page {n}/{number_of_page} : {number_of_page-n} remaining")
@@ -91,14 +92,14 @@ for key_word in key_word_list:
                 number_of_files+=1
             myprint("===========================================================")
             myprint(f'Page {n} has been scrapped entirely in folder {dirname}.')
-            if number_of_page < n:
+            if n < number_of_page:
                 myprint("===========================================================")
                 myprint(f' still {number_of_page-n} to scrap remaining...')
+                myprint("===========================================================")
+                myprint(f'Scraping of page {n+1} started...')
+                myprint("==================================")
             else:
-                myprint(f'==== LAST PAGE ({n/number_of_page}) ====')
-            myprint("===========================================================")
-            myprint(f'Scraping of page {n+1} started...')
-            myprint("==================================")
+                myprint(f'==== LAST PAGE ({n}/{number_of_page}) ====')
             k+=1
             printProgressBar(k+1, number_of_page, prefix='Downloading Page in progress', suffix= 'Page Complete', length=50)
     print("Done !")
