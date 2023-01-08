@@ -44,6 +44,10 @@ class Algo_G():
             if '+' in key_word:
                 dirname = key_word.replace('+','-')
                 filename = dirname
+            if ' ' in key_word:
+                dirname = key_word.replace(' ','-')
+                filename = dirname
+                key_word = key_word.replace(' ','+')
             if self._KILL:
                 break
             k = 0
@@ -135,6 +139,7 @@ class Algo_G():
         for item in summary:
              print(f"{item}")
         print('Hope you enjoyed and Have fun with your new data !!!')
+        self.flag_Thread_complete = True
         sys.exit(0)
 
 
