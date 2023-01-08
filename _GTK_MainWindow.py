@@ -1,13 +1,14 @@
 import sys
 import gi
 from threading import Thread
+from time import sleep
+
+from WebSiteScraping import Algo_G
 
 gi.require_version("Gtk","3.0")
 
 from gi.repository import Gtk
 
-from WebSiteScrapping import Algo_G
-from time import sleep
 
 class MyWindow(Gtk.Window):
 
